@@ -3,8 +3,10 @@ This is a small engine for writing the text based adventures by using a simple s
 
 ## Installation
 Right now the executables are not provided. For now you need to download the last version of Rust programming language. Here are the ways you can install it
+
 * https://forge.rust-lang.org/infra/other-installation-methods.html
 * https://www.rust-lang.org/tools/install
+
 After that you simply execute the following steps:
 1. download the source code from GitHub (e.g. use `git clone`)
 2. `cd` to the project's directory in your command line or terminal
