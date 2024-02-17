@@ -4,8 +4,8 @@ use crate::linker::Executable;
 use yaml_rust::yaml::Yaml;
 use linked_hash_map::LinkedHashMap;
 
-pub fn opcodes_into_yaml(opcodes : &Vec<Instruction>) -> Yaml {
-    let opcode_array : Vec<Yaml> = 
+pub fn opcodes_into_yaml(opcodes : &[Instruction]) -> Yaml {
+    let opcode_array : Vec<Yaml> =
         opcodes.iter()
         .map(
             |x| {
@@ -22,7 +22,7 @@ pub fn opcodes_into_yaml(opcodes : &Vec<Instruction>) -> Yaml {
                                 Yaml::Array(
                                     branches.iter()
                                     .map(
-                                        |BranchLeaf { jmp_address, option_name }| 
+                                        |BranchLeaf { jmp_address, option_name }|
                                         Yaml::Hash(vec![(Yaml::String(option_name.clone()), Yaml::Integer(*jmp_address as i64))].into_iter().collect())
                                     )
                                     .collect()
@@ -39,13 +39,13 @@ pub fn opcodes_into_yaml(opcodes : &Vec<Instruction>) -> Yaml {
 }
 
 pub fn entry_points_into_yaml(opcodes : &LinkedHashMap<String, usize>) -> Yaml {
-    let the_map = 
+    let the_map =
         opcodes.iter()
         .map(
-            |x| 
+            |x|
             (
-                Yaml::String(x.0.clone()), 
-                Yaml::Integer(x.1.clone() as i64)
+                Yaml::String(x.0.clone()),
+                Yaml::Integer(*x.1 as i64)
             )
         )
         .collect()

@@ -20,7 +20,7 @@ pub fn stdio_client(exec : ProgramExecutor) {
             },
             Request::Wait => {
                 println!("\n[Ok]");
-                io::stdin().read(&mut [0]).unwrap(); 
+                io::stdin().read_exact(&mut [0]).unwrap();
                 request = exec.done_printing(None);
             },
             Request::PerformChoice(choice_slice) => {
@@ -33,9 +33,10 @@ pub fn stdio_client(exec : ProgramExecutor) {
                 loop {
                     s.clear();
                     io::stdin().read_line(&mut s).unwrap();
-                    match s.trim().parse() {
-                        Ok(x) => { id = x; break },
-                        Err(_) => (),
+
+                    if let Ok(x) = s.trim().parse() {
+                        id = x;
+                        break;
                     }
                 }
                 request = exec.choose(id, None);
