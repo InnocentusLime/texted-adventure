@@ -12,28 +12,28 @@ pub enum Instruction {
     /// This a basic return. It either jump to
     /// the location pointed by the top of the
     /// `frame_stack`, or makes the vm terminate
-    Ret,                        
+    Ret,
 
     /// A simple unconditional jump
-    Jmp(usize),                 
+    Jmp(usize),
 
     /// This instruction makes the vm ask the
     /// client to print a message
-    Msg(String),                
+    Msg(String),
 
-    /// This instruction makes the vm as the 
+    /// This instruction makes the vm as the
     /// client to "pause"
-    Wait,                       
+    Wait,
 
     /// This is a simple branching. It offers
     /// the client to pic an option. When they
     /// pick the option, the vm jumps to the
     /// corresponding piece of code (see the `BranchLeaf` struct)
-    Branch(Vec<BranchLeaf>),    
+    Branch(Vec<BranchLeaf>),
 
-    /// This instruction puts a point on the 
+    /// This instruction puts a point on the
     /// frame stuck
-    PushPtr(usize),             
+    PushPtr(usize),
 }
 
 /// A `Program` is what our VM runs. To run a program an entry point
@@ -64,7 +64,7 @@ impl Program {
 }
 
 // Specification
-//  IF state = WaitingForChoice then the vm's 
+//  IF state = WaitingForChoice then the vm's
 //      instruction ptr is points at a `Branch` instruction
 //  ELSE nothing
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -88,10 +88,10 @@ pub enum Request<'a> {
     /// because of instruction limit.
     Resume,
 
-    /// The client must print a message. 
+    /// The client must print a message.
     PrintMessage(&'a str),
 
-    /// The client must "pause". This is a different concept: 
+    /// The client must "pause". This is a different concept:
     /// In terms of CLI
     /// they must wait for the user to press "Enter".
     /// In case of some kind of GUI that should be
@@ -130,7 +130,7 @@ impl<'a> ProgramExecutor<'a> {
         if self.state == ProgramState::Terminated { panic!("Can't continue") }
 
         // the main loop.
-        // Loop invariant: 
+        // Loop invariant:
         //  if the looping condition is true, then the VM is pointing
         //  on a new opcode or a new pointer was pushed on the frame stack
         while limit > 0 && request.is_none() {
@@ -188,12 +188,12 @@ impl<'a> ProgramExecutor<'a> {
             // Decrease the limti
             limit -= 1;
         }
-        
+
         // I don't forget to update the field on the struct so why not?!
         self.instruction_ptr = instruction_ptr;
-        
+
         // Now let's look if captured any requests. We need to update
-        // our inner state accordingly 
+        // our inner state accordingly
         match request {
             // No request? Then pause!
             None => { self.state = ProgramState::Paused; Request::Resume }
@@ -214,7 +214,7 @@ impl<'a> ProgramExecutor<'a> {
     /// Send the "unpause" signal to the VM. This signal should be sent
     /// as an asnwer to the "Resume" request.
     pub fn unpause(&mut self, limit : Option<usize>) -> Request<'a> {
-        match self.state.clone() {
+        match self.state {
             ProgramState::Paused => self.execute(limit),
             _ => panic!("Can't unpause in current state"),
         }
@@ -223,7 +223,7 @@ impl<'a> ProgramExecutor<'a> {
     /// Send the "accepted" signal to the VM. This signal should be sent
     /// as an answer to the "FlushAndWait" request.
     pub fn done_printing(&mut self, limit : Option<usize>) -> Request<'a> {
-        match self.state.clone() {
+        match self.state {
             ProgramState::Waiting => self.execute(limit),
             _ => panic!("I wasn't waiting for you to print"),
         }
@@ -232,7 +232,7 @@ impl<'a> ProgramExecutor<'a> {
     /// Send the "choice(id)" signal to the VM. This signal should be sent
     /// as an answer to the "PerformChoice(x)" request.
     pub fn choose(&mut self, option_id : usize, limit : Option<usize>) -> Request<'a> {
-        match self.state.clone() {
+        match self.state {
             ProgramState::WaitingForChoice => {
                 // Right now the pointer is pointing at the choice instruction
                 // This is an assumption which I am mentioning third time now :3

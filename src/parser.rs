@@ -30,7 +30,7 @@ fn parse_yaml_command(src : Yaml) -> Ast {
                             match x {
                                 Yaml::Hash(mut map) if map.len() == 1 => {
                                     match map.pop_back() {
-                                        Some((Yaml::String(name), Yaml::Array(code))) => (name, code.into_iter().map(|x| parse_yaml_command(x)).collect()),
+                                        Some((Yaml::String(name), Yaml::Array(code))) => (name, code.into_iter().map(parse_yaml_command).collect()),
                                         _ => panic!("In the choice map the key must be a string and the value must be an array"),
                                     }
                                 },
